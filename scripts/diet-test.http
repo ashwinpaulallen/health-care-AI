@@ -1,0 +1,440 @@
+### Diet Plan & Food Tracking API Tests
+### Use with REST Client extension in VS Code
+
+@baseUrl = http://localhost:3001
+@userId = demo-user
+
+### ============================================
+### DIET PLAN ENDPOINTS
+### ============================================
+
+### 1. Create a new diet plan
+POST {{baseUrl}}/diet/plans
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "name": "30-Day Weight Loss Plan",
+  "description": "Balanced vegetarian diet for gradual weight loss with focus on protein and fiber",
+  "startDate": "2025-01-01",
+  "durationDays": 30,
+  "dailyMacroTargets": {
+    "calories": 1800,
+    "protein": 120,
+    "carbs": 180,
+    "fat": 60,
+    "fiber": 30
+  },
+  "goals": ["Weight Loss", "General Wellness"],
+  "dietaryRestrictions": ["Vegetarian"],
+  "allergies": [],
+  "notes": "Focus on whole foods, avoid processed snacks"
+}
+
+### 2. Get all diet plans for a user
+GET {{baseUrl}}/diet/plans/user/{{userId}}
+
+### 3. Get only active diet plans
+GET {{baseUrl}}/diet/plans/user/{{userId}}?status=active
+
+### 4. Get active diet plan with progress
+GET {{baseUrl}}/diet/plans/user/{{userId}}/active
+
+### 5. Get specific diet plan (replace with actual ID)
+@planId = 67abc123def456789
+GET {{baseUrl}}/diet/plans/{{planId}}
+
+### 6. Update diet plan
+PUT {{baseUrl}}/diet/plans/{{planId}}
+Content-Type: application/json
+
+{
+  "dailyMacroTargets": {
+    "calories": 1900,
+    "protein": 130,
+    "carbs": 190,
+    "fat": 65,
+    "fiber": 32
+  },
+  "notes": "Increased protein target based on progress"
+}
+
+### 7. Update diet plan status
+PUT {{baseUrl}}/diet/plans/{{planId}}
+Content-Type: application/json
+
+{
+  "status": "completed"
+}
+
+### 8. Delete diet plan
+DELETE {{baseUrl}}/diet/plans/{{planId}}
+
+### ============================================
+### FOOD LOG ENDPOINTS
+### ============================================
+
+### 9. Log breakfast
+POST {{baseUrl}}/diet/logs
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "dietPlanId": "{{planId}}",
+  "date": "2025-01-15",
+  "food": {
+    "name": "Oats with Milk and Banana",
+    "quantity": "1 bowl (50g oats, 200ml milk, 1 banana)",
+    "mealType": "breakfast",
+    "time": "08:00",
+    "macros": {
+      "calories": 350,
+      "protein": 15,
+      "carbs": 55,
+      "fat": 8,
+      "fiber": 7
+    },
+    "notes": "Added honey for taste"
+  }
+}
+
+### 10. Log lunch
+POST {{baseUrl}}/diet/logs
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "dietPlanId": "{{planId}}",
+  "date": "2025-01-15",
+  "food": {
+    "name": "Roti with Dal and Vegetables",
+    "quantity": "2 rotis, 1 bowl dal, mixed vegetables",
+    "mealType": "lunch",
+    "time": "13:30",
+    "macros": {
+      "calories": 520,
+      "protein": 22,
+      "carbs": 75,
+      "fat": 14,
+      "fiber": 12
+    }
+  }
+}
+
+### 11. Log snack
+POST {{baseUrl}}/diet/logs
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "dietPlanId": "{{planId}}",
+  "date": "2025-01-15",
+  "food": {
+    "name": "Roasted Chana",
+    "quantity": "1/4 cup",
+    "mealType": "snack",
+    "time": "16:00",
+    "macros": {
+      "calories": 120,
+      "protein": 8,
+      "carbs": 18,
+      "fat": 2,
+      "fiber": 5
+    }
+  }
+}
+
+### 12. Log dinner
+POST {{baseUrl}}/diet/logs
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "dietPlanId": "{{planId}}",
+  "date": "2025-01-15",
+  "food": {
+    "name": "Paneer Tikka with Salad",
+    "quantity": "150g paneer, large salad",
+    "mealType": "dinner",
+    "time": "20:00",
+    "macros": {
+      "calories": 380,
+      "protein": 28,
+      "carbs": 15,
+      "fat": 24,
+      "fiber": 6
+    }
+  }
+}
+
+### 13. Get food log for specific date
+@logDate = 2025-01-15
+GET {{baseUrl}}/diet/logs/user/{{userId}}/date/{{logDate}}
+
+### 14. Get food logs for date range
+@startDate = 2025-01-01
+@endDate = 2025-01-31
+GET {{baseUrl}}/diet/logs/user/{{userId}}/range?startDate={{startDate}}&endDate={{endDate}}
+
+### 15. Update food log (add water intake and symptoms)
+@logId = 67xyz789abc123
+PUT {{baseUrl}}/diet/logs/{{logId}}
+Content-Type: application/json
+
+{
+  "waterIntake": 2500,
+  "symptoms": ["slight bloating"],
+  "energyLevel": 4,
+  "hungerLevel": 2,
+  "notes": "Felt good overall, slight bloating after lunch"
+}
+
+### ============================================
+### AI RECOMMENDATIONS
+### ============================================
+
+### 16. Get AI recommendations for today
+GET {{baseUrl}}/diet/logs/user/{{userId}}/recommendations
+
+### 17. Get AI recommendations for specific date
+GET {{baseUrl}}/diet/logs/user/{{userId}}/recommendations?date={{logDate}}
+
+### ============================================
+### PROGRESS TRACKING
+### ============================================
+
+### 18. Get progress for diet plan
+GET {{baseUrl}}/diet/logs/user/{{userId}}/progress/{{planId}}
+
+### ============================================
+### COMPLETE WORKFLOW TEST
+### ============================================
+
+### Step 1: Create a 7-day diet plan
+POST {{baseUrl}}/diet/plans
+Content-Type: application/json
+
+{
+  "userId": "test-user-001",
+  "name": "7-Day Quick Start",
+  "description": "One week balanced diet to kickstart healthy eating",
+  "startDate": "2025-01-20",
+  "durationDays": 7,
+  "dailyMacroTargets": {
+    "calories": 2000,
+    "protein": 140,
+    "carbs": 200,
+    "fat": 70,
+    "fiber": 28
+  },
+  "goals": ["General Wellness", "Energy Boost"],
+  "dietaryRestrictions": [],
+  "allergies": ["Peanuts"]
+}
+
+### Step 2: Log Day 1 - Breakfast
+POST {{baseUrl}}/diet/logs
+Content-Type: application/json
+
+{
+  "userId": "test-user-001",
+  "date": "2025-01-20",
+  "food": {
+    "name": "Poha with Vegetables",
+    "quantity": "1 large bowl",
+    "mealType": "breakfast",
+    "macros": {
+      "calories": 300,
+      "protein": 8,
+      "carbs": 50,
+      "fat": 8,
+      "fiber": 5
+    }
+  }
+}
+
+### Step 3: Log Day 1 - Lunch
+POST {{baseUrl}}/diet/logs
+Content-Type: application/json
+
+{
+  "userId": "test-user-001",
+  "date": "2025-01-20",
+  "food": {
+    "name": "Brown Rice with Rajma Curry",
+    "quantity": "1 cup rice, 1 bowl curry",
+    "mealType": "lunch",
+    "macros": {
+      "calories": 480,
+      "protein": 18,
+      "carbs": 70,
+      "fat": 12,
+      "fiber": 10
+    }
+  }
+}
+
+### Step 4: Get recommendations after lunch
+GET {{baseUrl}}/diet/logs/user/test-user-001/recommendations?date=2025-01-20
+
+### Step 5: Log Day 1 - Evening Snack (based on recommendation)
+POST {{baseUrl}}/diet/logs
+Content-Type: application/json
+
+{
+  "userId": "test-user-001",
+  "date": "2025-01-20",
+  "food": {
+    "name": "Greek Yogurt with Berries",
+    "quantity": "1 cup yogurt, handful berries",
+    "mealType": "snack",
+    "macros": {
+      "calories": 180,
+      "protein": 15,
+      "carbs": 22,
+      "fat": 4,
+      "fiber": 3
+    }
+  }
+}
+
+### Step 6: Log Day 1 - Dinner
+POST {{baseUrl}}/diet/logs
+Content-Type: application/json
+
+{
+  "userId": "test-user-001",
+  "date": "2025-01-20",
+  "food": {
+    "name": "Grilled Chicken with Vegetables",
+    "quantity": "150g chicken, mixed vegetables",
+    "mealType": "dinner",
+    "macros": {
+      "calories": 420,
+      "protein": 45,
+      "carbs": 25,
+      "fat": 18,
+      "fiber": 8
+    }
+  }
+}
+
+### Step 7: Update with wellness metrics
+@day1LogId = 67test123
+PUT {{baseUrl}}/diet/logs/{{day1LogId}}
+Content-Type: application/json
+
+{
+  "waterIntake": 2800,
+  "energyLevel": 5,
+  "hungerLevel": 2,
+  "notes": "Great day! Felt energized and satisfied"
+}
+
+### Step 8: Check progress after 3 days
+GET {{baseUrl}}/diet/logs/user/test-user-001/progress/{{planId}}
+
+### ============================================
+### EDGE CASES & ERROR HANDLING
+### ============================================
+
+### Test: Create plan with missing required fields (should fail)
+POST {{baseUrl}}/diet/plans
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "name": "Incomplete Plan"
+}
+
+### Test: Log food without macros (should succeed)
+POST {{baseUrl}}/diet/logs
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "date": "2025-01-15",
+  "food": {
+    "name": "Homemade Snack",
+    "quantity": "1 serving",
+    "mealType": "snack"
+  }
+}
+
+### Test: Get recommendations without active plan (should fail gracefully)
+GET {{baseUrl}}/diet/logs/user/nonexistent-user/recommendations
+
+### Test: Get progress for non-existent plan (should fail)
+GET {{baseUrl}}/diet/logs/user/{{userId}}/progress/000000000000000000000000
+
+### ============================================
+### SAMPLE DATA FOR TESTING
+### ============================================
+
+### Create multiple diet plans for testing
+POST {{baseUrl}}/diet/plans
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "name": "Muscle Gain - 60 Days",
+  "description": "High protein diet for muscle building",
+  "startDate": "2025-02-01",
+  "durationDays": 60,
+  "dailyMacroTargets": {
+    "calories": 2500,
+    "protein": 180,
+    "carbs": 250,
+    "fat": 80,
+    "fiber": 35
+  },
+  "goals": ["Muscle Gain", "Athletic Performance"],
+  "dietaryRestrictions": [],
+  "allergies": []
+}
+
+###
+POST {{baseUrl}}/diet/plans
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "name": "Diabetes Management",
+  "description": "Low GI diet for blood sugar control",
+  "startDate": "2025-01-15",
+  "durationDays": 90,
+  "dailyMacroTargets": {
+    "calories": 1600,
+    "protein": 100,
+    "carbs": 150,
+    "fat": 55,
+    "fiber": 35
+  },
+  "goals": ["Diabetes Management", "Heart Health"],
+  "dietaryRestrictions": ["Low-Carb"],
+  "allergies": []
+}
+
+### ============================================
+### NOTES
+### ============================================
+
+# To use these tests:
+# 1. Install REST Client extension in VS Code
+# 2. Update @baseUrl if backend is on different port
+# 3. Update @userId with your test user ID
+# 4. Replace @planId and @logId with actual IDs from responses
+# 5. Run tests sequentially for workflow, or individually as needed
+
+# Expected Responses:
+# - 200/201: Success
+# - 400: Bad request (missing fields, invalid data)
+# - 404: Not found (invalid IDs)
+# - 500: Server error
+
+# Tips:
+# - Use "Send Request" above each ### comment
+# - Check response in right panel
+# - Copy IDs from responses for subsequent requests
+# - Monitor backend logs for detailed error messages
+

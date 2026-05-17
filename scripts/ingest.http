@@ -1,0 +1,82 @@
+### Health Check
+GET http://localhost:3001/chat/health
+
+###
+
+### SYMPTOMS - Ingest Symptom Guidance
+# Note: Replace <<file:...>> with actual file content if your HTTP client doesn't support file includes
+# Or manually copy-paste the content from seeds/symptoms.md into the "text" field
+POST http://localhost:3001/rag/ingest-custom
+Content-Type: application/json
+
+{
+  "domain": "symptom",
+  "docs": [
+    {
+      "title": "Symptom Guidance Reference",
+      "text": "<<file:../seeds/symptoms.md>>",
+      "tags": ["symptoms", "health", "medical-guidance"]
+    }
+  ]
+}
+
+###
+
+### FOOD - Ingest Food & Nutrition Guide
+# Note: Replace <<file:...>> with actual file content if your HTTP client doesn't support file includes
+# Or manually copy-paste the content from seeds/food.md into the "text" field
+POST http://localhost:3001/rag/ingest-custom
+Content-Type: application/json
+
+{
+  "domain": "food",
+  "docs": [
+    {
+      "title": "Food & Nutrition Reference Guide",
+      "text": "<<file:../seeds/food.md>>",
+      "tags": ["nutrition", "food", "diet", "indian-cuisine"]
+    }
+  ]
+}
+
+###
+
+### ALTERNATIVE: Use the automatic seed ingestion endpoint
+# This endpoint reads directly from /seeds directory
+POST http://localhost:3001/rag/ingest
+
+###
+
+### Test Chat - Symptom Query
+POST http://localhost:3001/chat/message
+Content-Type: application/json
+
+{
+  "userId": "demo-user",
+  "text": "What causes bloating after meals?"
+}
+
+###
+
+### Test Chat - Food Query
+POST http://localhost:3001/chat/message
+Content-Type: application/json
+
+{
+  "userId": "demo-user",
+  "text": "What are good sources of protein?"
+}
+
+###
+
+### Test Chat - Red Flag Query
+POST http://localhost:3001/chat/message
+Content-Type: application/json
+
+{
+  "userId": "demo-user",
+  "text": "I have chest pain"
+}
+
+###
+
